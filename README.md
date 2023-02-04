@@ -1,125 +1,97 @@
-<p align="center">
-<img src="https://user-images.githubusercontent.com/2666735/30651452-58ae6c88-9deb-11e7-9e13-6beae3f6c54c.png" alt="Meting">
-</p>
+<h1 align="center">
+Meting-plus
+</h1>
 
-<p align="center">
-<a href="https://i-meto.com"><img alt="Author" src="https://img.shields.io/badge/Author-METO-blue.svg?style=flat-square"/></a>
-<a href="https://www.npmjs.com/package/meting"><img alt="Version" src="https://img.shields.io/npm/v/meting.svg?style=flat-square"/></a>
-<a href="https://travis-ci.org/metowolf/MetingJS"><img alt="Travis" src="https://img.shields.io/travis/metowolf/MetingJS.svg?style=flat-square"></a>
-<img alt="License" src="https://img.shields.io/npm/l/meting.svg?style=flat-square"/>
-</p>
+## 仓库说明
 
-## Requirement
+本仓库是我对[metingjs](https://github.com/metowolf/MetingJS)的修改版,用于在[volantis](https://volantis.js.org/)主题中实现加载本地音乐功能.除此之外其他功能不变,可以方便地由``metingjs``快速转到``meting-plus``
 
-https://github.com/MoePlayer/APlayer
+## 如何使用
 
-|Version|API Status|APlayer|
-|---|---|---|
-|1.2.x|Supported|[![](https://img.shields.io/badge/APlayer-^1.10.0-green.svg?longCache=true&style=for-the-badge)](https://github.com/MoePlayer/APlayer)|
-|2.0.x|Latest|[![](https://img.shields.io/badge/APlayer-^1.10.0-green.svg?longCache=true&style=for-the-badge)](https://github.com/MoePlayer/APlayer)|
+只需要在原``meting-js``标签中添加``audio``属性,即可加载本地音乐.如果没有该属性,则使用原``meting-js``方法
 
-## CDN
- - https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js
- - https://unpkg.com/meting@2.0.1/dist/Meting.min.js
+将歌曲以数组的方式储存,如下所示
 
-## Quick Start
+```js
+const MyList = [{
+        "name": "Flower Dance",
+        "artist": "Oturans - DJ Okawari",
+        "title": "Flower Dance",
+        "url": "music/Flower Dance.mp3",
+        "lrc": "music/all.lrc",
+        "cover": "music/Flower Dance.jpg"
+    }, {
+        "name": "夜的钢琴曲",
+        "artist": "K. Williams",
+        "title": "夜的钢琴曲",
+        "url": "music/夜的钢琴曲.mp3",
+        "lrc": "music/all.lrc",
+        "cover": "music/夜的钢琴曲.jpg"
+    }]
+```
+
+### 从``js``加载(推荐)
+
+创建如下标签
+
 ```html
-<!-- require APlayer -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
-<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
-<!-- require MetingJS -->
-<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
-
-<meting-js
-	server="netease"
-	type="playlist"
-	id="60198">
+<meting-js audio="MyList">
 </meting-js>
 ```
-https://music.163.com/#/playlist?id=60198
+
+则``meting-plus``会通过``eval``的方式执行``MyList``,返回值作为歌曲列表传入``Aplayer``
+
+### 从标签属性加载
+
+将歌曲列表转化为字符串,并使用``URI``编码
+
+```js
+const MyListStr = encodeURI(JSON.stringify(MyList))
+```
+
+此时``MyListStr``的值为
+
+> %5B%7B%22name%22:%22Flower%20Dance%22,%22artist%22:%22Oturans%20-%20DJ%20Okawari%22,%22title%22:%22Flower%20Dance%22,%22url%22:%22music/Flower%20Dance.mp3%22,%22lrc%22:%22music/all.lrc%22,%22cover%22:%22music/Flower%20Dance.jpg%22%7D,%7B%22name%22:%22%E5%A4%9C%E7%9A%84%E9%92%A2%E7%90%B4%E6%9B%B2%22,%22artist%22:%22K.%20Williams%22,%22title%22:%22%E5%A4%9C%E7%9A%84%E9%92%A2%E7%90%B4%E6%9B%B2%22,%22url%22:%22music/%E5%A4%9C%E7%9A%84%E9%92%A2%E7%90%B4%E6%9B%B2.mp3%22,%22lrc%22:%22music/all.lrc%22,%22cover%22:%22music/%E5%A4%9C%E7%9A%84%E9%92%A2%E7%90%B4%E6%9B%B2.jpg%22%7D%5D
+
+将该值作为``meting-js``标签的``audio``属性写入
 
 ```html
-<meting-js
-	auto="https://y.qq.com/n/yqq/song/001RGrEX3ija5X.html">
+<meting-js audio="%5B%7B%22name%22:%22Flower%20Dance%22,%22artist%22:%22Oturans%20-%20DJ%20Okawari%22,%22title%22:%22Flower%20Dance%22,%22url%22:%22music/Flower%20Dance.mp3%22,%22lrc%22:%22music/all.lrc%22,%22cover%22:%22music/Flower%20Dance.jpg%22%7D,%7B%22name%22:%22%E5%A4%9C%E7%9A%84%E9%92%A2%E7%90%B4%E6%9B%B2%22,%22artist%22:%22K.%20Williams%22,%22title%22:%22%E5%A4%9C%E7%9A%84%E9%92%A2%E7%90%B4%E6%9B%B2%22,%22url%22:%22music/%E5%A4%9C%E7%9A%84%E9%92%A2%E7%90%B4%E6%9B%B2.mp3%22,%22lrc%22:%22music/all.lrc%22,%22cover%22:%22music/%E5%A4%9C%E7%9A%84%E9%92%A2%E7%90%B4%E6%9B%B2.jpg%22%7D%5D">
 </meting-js>
 ```
-https://y.qq.com/n/yqq/song/001RGrEX3ija5X.html
+
+## 完整代码
 
 ```html
-<meting-js
-	name="rainymood"
-	artist="rainymood"
-	url="https://rainymood.com/audio1110/0.m4a"
-	cover="https://rainymood.com/i/badge.jpg">
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Meting-plus</title>
+    <script defer src="APlayer.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="APlayer.min.css" />
+    <script defer src="source/Meting-plus.js"></script>
+</head>
+<body>
+<meting-js audio="MyList">
 </meting-js>
-```
-for self-hosted media
-
-```html
-<meting-js
-	name="rainymood"
-	artist="rainymood"
-	url="https://rainymood.com/audio1110/0.m4a"
-	cover="https://rainymood.com/i/badge.jpg"
-	fixed="true">
-	<pre hidden>
-		[00:00.00]This
-		[00:04.01]is
-		[00:08.02]lyric
-	</pre>
-</meting-js>
-```
-Fixed mode with Lyric text
-
-
-## Option
-
-|option               |default      |description|
-|:--------------------|:------------:|:----------|
-|id              |**require**   |song id / playlist id / album id / search keyword|
-|server          |**require**   |music platform: `netease`, `tencent`, `kugou`, `xiami`, `baidu`|
-|type            |**require**   |`song`, `playlist`, `album`, `search`, `artist`|
-|auto            |options       |music link, support: `netease`, `tencent`, `xiami`|
-|fixed           |`false`       |enable fixed mode|
-|mini            |`false`       |enable mini mode|
-|autoplay        |`false`       |audio autoplay|
-|theme           |`#2980b9`     |main color|
-|loop            |`all`         |player loop play, values: 'all', 'one', 'none'|
-|order           |`list`        |player play order, values: 'list', 'random'|
-|preload         |`auto`        |values: 'none', 'metadata', 'auto'|
-|volume          |`0.7`         |default volume, notice that player will remember user setting, default volume will not work after user set volume themselves|
-|mutex           |`true`        |prevent to play multiple player at the same time, pause other players when this player start play|
-|lrc-type         |`0`           |lyric type|
-|list-folded      |`false`       |indicate whether list should folded at first|
-|list-max-height   |`340px`       |list max height|
-|storage-name     |`metingjs`    |localStorage key that store player setting|
-
-Documentation for APlayer can be found at https://aplayer.js.org/#/home?id=options
-
-## Advanced
-
-MetingJS allow you to use self-hosted API, [more information about Meting](https://github.com/metowolf/Meting).
-
-```html
+</body>
+</html>
 <script>
-var meting_api='http://example.com/api.php?server=:server&type=:type&id=:id&auth=:auth&r=:r';
+    const MyList = [{
+        "name": "Flower Dance",
+        "artist": "Oturans - DJ Okawari",
+        "title": "Flower Dance",
+        "url": "music/Flower Dance.mp3",
+        "lrc": "music/all.lrc",
+        "cover": "music/Flower Dance.jpg"
+    }, {
+        "name": "夜的钢琴曲",
+        "artist": "K. Williams",
+        "title": "夜的钢琴曲",
+        "url": "music/夜的钢琴曲.mp3",
+        "lrc": "music/all.lrc",
+        "cover": "music/夜的钢琴曲.jpg"
+    }]
 </script>
-
-<script src="dist/Meting.min.js"></script>
 ```
-
-## Browser support
-
-Browsers without [native custom element support](https://caniuse.com/#feat=custom-elementsv1) require a [polyfill](https://github.com/webcomponents/custom-elements).
-
- - Chrome
- - Firefox
- - Safari
- - Internet Explorer 11
- - Microsoft Edge
-
-## Author
-
-**MetingJS** © [metowolf](https://github.com/metowolf), Released under the [MIT](./LICENSE) License.<br>
-
-> Blog [@meto](https://i-meto.com) · GitHub [@metowolf](https://github.com/metowolf) · Twitter [@metowolf](https://twitter.com/metowolf) · Telegram Channel [@metooooo](https://t.me/metooooo)

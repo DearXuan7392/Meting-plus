@@ -29,6 +29,7 @@ class MetingJSElement extends HTMLElement {
       'server', 'type', 'id', 'api', 'auth',
       'auto', 'lock',
       'name', 'title', 'artist', 'author', 'url', 'cover', 'pic', 'lyric', 'lrc',
+      'audio',
     ]
     this.meta = {}
     for (let key of keys) {
@@ -72,6 +73,16 @@ class MetingJSElement extends HTMLElement {
   }
 
   _parse() {
+    if (this.meta.audio) {
+      let audioList
+      if(this.meta.audio.trim().startsWith("%5B")){ // 以中括号开头,认为是数组
+        audioList = JSON.parse(decodeURI(this.meta.audio))
+      }else{
+        audioList = eval(this.meta.audio)
+      }
+      this._loadPlayer(audioList)
+      return
+    }
     if (this.meta.url) {
       let result = {
         name: this.meta.name || this.meta.title || 'Audio name',
@@ -133,8 +144,6 @@ class MetingJSElement extends HTMLElement {
   }
 
 }
-
-console.log('\n %c MetingJS v2.0.1 %c https://github.com/metowolf/MetingJS \n', 'color: #fadfa3; background: #030307; padding:5px 0;', 'background: #fadfa3; padding:5px 0;')
 
 if (window.customElements && !window.customElements.get('meting-js')) {
   window.MetingJSElement = MetingJSElement
